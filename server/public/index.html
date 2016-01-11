@@ -1,0 +1,153 @@
+<html>
+<head>
+    <title></title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js" ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js" ></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/smoothie/1.27.0/smoothie.min.js"></script>
+    <script src="//cdn.socket.io/socket.io-1.4.3.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.4.0/animate.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+</head>
+<style>
+
+    @keyframes pulse-slow {
+        0%{transform:scale(1)}
+        50%{transform:scale(1.4)}
+        100%{transform:scale(1)}
+    }
+
+    /** animate-heartbeat **/
+    @keyframes pulse {
+        0% {
+            transform: scaleX(1) scaleY(1);
+        }
+        10% {
+            transform: scaleX(0.85) scaleY(0.85);
+        }
+        20% {
+            transform: scaleX(1) scaleY(1);
+        }
+        30% {
+            transform: scaleX(0.85) scaleY(0.85);
+        }
+        40% {
+            transform: scaleX(1) scaleY(1);
+        }
+        50% {
+            transform: scaleX(0.85) scaleY(0.85);
+        }
+        60% {
+            transform: scaleX(1) scaleY(1);
+        }
+        70% {
+            transform: scaleX(0.85) scaleY(0.85);
+        }
+        80% {
+            transform: scaleX(1) scaleY(1);
+        }
+        90% {
+            transform: scaleX(0.85) scaleY(0.85);
+        }
+        100% {
+            transform: scaleX(1) scaleY(1);
+        }
+    }
+    .animate-heartbeat {
+        animation: pulse-slow 2s infinite;
+    }
+
+    .fa-stack-text {
+        font-size: 2rem ;
+    }
+
+</style>
+
+<body>
+<div>
+    <canvas id="mycanvas" width="800" height="180"></canvas>
+
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="heart" class="fa fa-heart fa-stack-2x"></i>
+        <i id="hr" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
+</div>
+
+<script>
+
+    var timer = null;
+    var timeSeries;
+
+    function setupSmootie() {
+        timeSeries = new TimeSeries();
+        var smoothieChart = new SmoothieChart({
+            minValue: 50.0,
+            maxValue: 150.0,
+            grid: {
+                strokeStyle: 'rgb(125, 0, 0)',
+                fillStyle: 'rgb(60, 0, 0)',
+                lineWidth: 1,
+                millisPerLine: 1000,
+                verticalSections: 4
+            }
+        });
+        smoothieChart.addTimeSeries(timeSeries, {
+            strokeStyle:'rgb(0, 255, 0)',
+            fillStyle:'rgba(0, 255, 0, 0.4)',
+            lineWidth:3
+        });
+        smoothieChart.streamTo(document.getElementById("mycanvas"), 250);
+    }
+
+window.onload = function () {
+
+        var heartText =  document.getElementById("hr");
+        //var hrElement = $("#hr"); //document.getElementById("hr");
+        var heart = $("#heart");
+
+        setupSmootie();
+
+        var socket = io.connect('/iot');
+        socket.on('heartRate', function (msg) {
+
+            var hr = parseInt(msg);
+            heartText.innerHTML = hr;
+
+            if(!heart.hasClass("animate-heartbeat")) {
+                heart.addClass("animate-heartbeat");
+            }
+
+            //reset timer.
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+                heart.removeClass("animate-heartbeat");
+            }, 5000);
+
+            if (hr > 120) {
+                heart.css({
+                    color: "#d63230"
+                });
+            } else if (hr > 100) {
+                heart.css({
+                    color: "#ff4136"
+                });
+            } else if(hr > 80){
+                heart.css({
+                    color: "#ff6f69"
+                });
+            } else {
+                heart.css({
+                    color: "#008000"
+                } );
+            }
+
+            timeSeries.append(new Date().getTime(), hr);
+
+
+        });
+    };
+
+</script>
+
+</body>
+</html>
