@@ -8,10 +8,11 @@ class ViewController: UIViewController, MSBClientManagerDelegate {
     @IBOutlet weak var labelStatusServer: UILabel!
     @IBOutlet weak var labelStatusBand: UILabel!
     @IBOutlet weak var labelStatusHeartRate: UILabel!
+    @IBOutlet weak var labelStatusSkinTemp: UILabel!
     @IBOutlet weak var labelStatusHeartRateSensor: UILabel!
 
     //let socket = SocketIOClient(socketURL: "http://sumanths-mbp.fritz.box:3010", options: [.Nsp("/iot")]);
-    let socket = SocketIOClient(socketURL: "http://172.20.10.5:3010", options: [.Nsp("/iot")]);
+    //let socket = SocketIOClient(socketURL: "http://172.20.10.5:3010", options: [.Nsp("/iot")]);
     
     weak var client: MSBClient?
 
@@ -74,6 +75,11 @@ class ViewController: UIViewController, MSBClientManagerDelegate {
         }
     }
     
+    func reportSkinTemp(skinTempData: MSBSensorSkinTemperatureData!, error: NSError!) {
+        self.labelStatusSkinTemp.text = NSString(format: "%0.2f", skinTempData.temperature*9/5+32) as String
+        socket.emit("skinTemp", skinTempData.temperature)
+    }
+    
     //MARK: UI Actions
     @IBAction func buttonStartRead(sender: UIButton) {
         MSBClientManager.sharedManager().delegate = self
@@ -98,6 +104,7 @@ class ViewController: UIViewController, MSBClientManagerDelegate {
 
                 do {
                     try client.sensorManager.startHeartRateUpdatesToQueue(nil, withHandler: self.reportHeartRate)
+                    try client.sensorManager.startSkinTempUpdatesToQueue(nil, withHandler: self.reportSkinTemp)
                 } catch let error as NSError {
                     print("Error: \(error.localizedDescription)")
                 }

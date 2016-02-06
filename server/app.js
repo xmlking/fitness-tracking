@@ -24,14 +24,21 @@ app.get('/', function(req, res) {
 
 io.of('/iot').on('connection', function(socket) {
     console.log('new connection ' + socket);
-    var tags = { user:'sumo', device:'mband', sensor:'hr' };
-    var values = {value: 0};
+    var hrTags = { user:'sumo', device:'mband', sensor:'hr' };
+    var stTags = { user:'sumo', device:'mband', sensor:'st' };
 
     socket.on('heartRate', function(hr) {
-        console.log(hr);
-        values.value = parseInt(hr);
-        client.writePoint('iot', values, tags, done);
+        //console.log(hr);
+        var value = parseInt(hr);
+        client.writePoint('iot', {value: value}, hrTags, done);
         socket.broadcast.emit('heartRate', hr);
+    });
+
+    socket.on('skinTemp', function(st) {
+        //console.log(st);
+        var value = parseInt(st);
+        client.writePoint('iot', {value: value}, stTags, done);
+        socket.broadcast.emit('skinTemp', value * 9 / 5 + 32);
     });
     
     socket.on('disconnect', function(msg) {
