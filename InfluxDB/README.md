@@ -37,8 +37,9 @@ TCP ports 8088 and 8091 are required for clustered InfluxDB instances
 ```
 
 #### Kill background process
+```bash
 kill -9 $(cat logs/influxdb.pid)
-
+```
 
 #### Configuration
 Enable authentication as documented [here](https://influxdb.com/docs/v0.9/administration/authentication_and_authorization.html#admin-users)
