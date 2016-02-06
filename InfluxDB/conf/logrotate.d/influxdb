@@ -1,0 +1,8 @@
+logs/influxdb.log {
+    daily
+    rotate 7
+    missingok
+    dateext
+    copytruncate
+    compress
+}
