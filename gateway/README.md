@@ -14,3 +14,12 @@ npm install
 ```
 node app.js
 ```
+
+
+
+### Access Streaming UX
+```
+http://localhost:3010/
+```
+
+![Live Graph](./mband.gif)

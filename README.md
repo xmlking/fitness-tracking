@@ -1,5 +1,9 @@
 Fitness Tracking
 ----------------
-Read sensor data from *Microsoft Band* through iOS app and stream it to a IoT Gateway server.
+Read sensor data from multiple wearable devices through iOS app and store data into IoT Cloud for analytics and visualization.
+
+
+
+![Live Graph](./gateway/mband.gif)
 
 

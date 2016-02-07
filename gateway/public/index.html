@@ -75,6 +75,22 @@
         <i id="temp" class="fa fa-stop fa-stack-2x"></i>
         <i id="st" class="fa-stack-1x fa-stack-text fa-inverse"></i>
     </span>
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="steps" class="fa fa-stop fa-stack-2x"></i>
+        <i id="totalSteps" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="calories" class="fa fa-stop fa-stack-2x"></i>
+        <i id="cl" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="position_distance" class="fa fa-stop fa-stack-2x"></i>
+        <i id="distance" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="uv_index" class="fa fa-stop fa-stack-2x"></i>
+        <i id="uv" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
 </div>
 
 <script>
@@ -109,6 +125,10 @@ window.onload = function () {
         //var hrElement = $("#hr"); //document.getElementById("hr");
         var heart = $("#heart");
         var tempText =  document.getElementById("st");
+        var totalSteps =  document.getElementById("totalSteps");
+        var cl =  document.getElementById("cl");
+        var uv =  document.getElementById("uv");
+        var distance =  document.getElementById("distance");
 
         setupSmootie();
 
@@ -158,11 +178,27 @@ window.onload = function () {
                     console.log(data.values.value);
                     break;
 
+                case 'steps':
+                    totalSteps.innerHTML = parseInt(data.values.totalSteps);
+                    break;
+
+                case 'position':
+                    distance.innerHTML = parseInt(data.values.distance);
+                    break;
+
+                case 'cl':
+                    cl.innerHTML = parseInt(data.values.calories);
+                    break;
+
+
+                case 'uv':
+                    uv.innerHTML = data.values.value;
+                    break;
+
                 default:
                     console.log(data);
             }
 
-            //-----
 
 
 
