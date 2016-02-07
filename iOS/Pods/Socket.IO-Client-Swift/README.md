@@ -5,7 +5,7 @@ Socket.IO-client for iOS/OS X.
 
 ##Example
 ```swift
-let socket = SocketIOClient(socketURL: "localhost:8080", options: [.Log(true), .ForcePolling(true)])
+let socket = SocketIOClient(socketURL: NSURL(string: "http://localhost:8080")!, options: [.Log(true), .ForcePolling(true)])
 
 socket.on("connect") {data, ack in
     print("socket connected")
@@ -26,7 +26,8 @@ socket.connect()
 
 ##Objective-C Example
 ```objective-c
-SocketIOClient* socket = [[SocketIOClient alloc] initWithSocketURL:@"localhost:8080" options:@{@"log": @YES, @"forcePolling": @YES}];
+NSURL* url = [[NSURL alloc] initWithString:@"http://localhost:8080"];
+SocketIOClient* socket = [[SocketIOClient alloc] initWithSocketURL:url options:@{@"log": @YES, @"forcePolling": @YES}];
 
 [socket on:@"connect" callback:^(NSArray* data, SocketAckEmitter* ack) {
     NSLog(@"socket connected");
@@ -65,11 +66,27 @@ Manually (iOS 7+)
 1. Copy the Source folder into your Xcode project. (Make sure you add the files to your target(s))
 2. If you plan on using this from Objective-C, read [this](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html) on exposing Swift code to Objective-C.
 
+Swift Package Manager
+---------------------
+Add the project as a dependency to your Package.swift:
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "YourSocketIOProject",
+    dependencies: [
+        .Package(url: "https://github.com/socketio/socket.io-client-swift", majorVersion: 5)
+    ]
+)
+```
+
+Then import `import SocketIOClientSwift`.
+
 Carthage
 -----------------
 Add this line to your `Cartfile`:
 ```
-github "socketio/socket.io-client-swift" ~> 4.1.6 # Or latest version
+github "socketio/socket.io-client-swift" ~> 5.3.3 # Or latest version
 ```
 
 Run `carthage update --platform ios,macosx`.
@@ -83,7 +100,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Socket.IO-Client-Swift', '~> 4.1.6' # Or latest version
+pod 'Socket.IO-Client-Swift', '~> 5.3.3' # Or latest version
 ```
 
 Install pods:
@@ -96,13 +113,13 @@ Import the module:
 
 Swift:
 ```swift
-import Socket_IO_Client_Swift
+import SocketIOClientSwift
 ```
 
 Objective-C:
 
 ```Objective-C
-#import <Socket_IO_Client_Swift/Socket_IO_Client_Swift-Swift.h>
+#import <SocketIOClientSwift/SocketIOClientSwift-Swift.h>
 ```
 
 CocoaSeeds
@@ -111,7 +128,7 @@ CocoaSeeds
 Add this line to your `Seedfile`:
 
 ```
-github "socketio/socket.io-client-swift", "v4.1.6", :files => "SocketIOClientSwift/*.swift" # Or latest version
+github "socketio/socket.io-client-swift", "v5.3.3", :files => "Source/*.swift" # Or latest version
 ```
 
 Run `seed install`.
@@ -120,9 +137,9 @@ Run `seed install`.
 ##API
 Constructors
 -----------
-`init(var socketURL: String, options: Set<SocketIOClientOption> = [])` - Creates a new SocketIOClient. opts is a Set of SocketIOClientOption. If your socket.io server is secure, you need to specify `https` in your socketURL.
+`init(var socketURL: NSURL, options: Set<SocketIOClientOption> = [])` - Creates a new SocketIOClient. options is a Set of SocketIOClientOption. If your socket.io server is secure, you need to specify `https` in your socketURL.
 
-`convenience init(socketURL: String, options: NSDictionary?)` - Same as above, but meant for Objective-C. See Options on how convert between SocketIOClientOptions and dictionary keys.
+`convenience init(socketURL: NSURL, options: NSDictionary?)` - Same as above, but meant for Objective-C. See Options on how convert between SocketIOClientOptions and dictionary keys.
 
 Options
 -------
@@ -141,7 +158,7 @@ case Cookies([NSHTTPCookie]) // An array of NSHTTPCookies. Passed during the han
 case Log(Bool) // If `true` socket will log debug messages. Default is false.
 case Logger(SocketLogger) // Custom logger that conforms to SocketLogger. Will use the default logging otherwise.
 case SessionDelegate(NSURLSessionDelegate) // Sets an NSURLSessionDelegate for the underlying engine. Useful if you need to handle self-signed certs. Default is nil.
-case Path(String) // If the server uses a custom path. ex: `"/swift"`. Default is `""`
+case Path(String) // If the server uses a custom path. ex: `"/swift/"`. Default is `""`
 case ExtraHeaders([String: String]) // Adds custom headers to the initial request. Default is nil.
 case HandleQueue(dispatch_queue_t) // The dispatch queue that handlers are run on. Default is the main queue.
 case VoipEnabled(Bool) // Only use this option if you're using the client with VoIP services. Changes the way the WebSocket is created. Default is false
@@ -160,9 +177,9 @@ Methods
 7. `emitWithAck(event: String, withItems items: [AnyObject]) -> (UInt64, (NSArray?) -> Void) -> Void` - `emitWithAck` for Objective-C. Note: The message is not sent until you call the returned function.
 8. `connect()` - Establishes a connection to the server. A "connect" event is fired upon successful connection.
 9. `connect(timeoutAfter timeoutAfter: Int, withTimeoutHandler handler: (() -> Void)?)` - Connect to the server. If it isn't connected after timeoutAfter seconds, the handler is called.
-10. `close()` - Closes the socket. Once a socket is closed it should not be reopened.
+10. `disconnect()` - Closes the socket. Reopening a disconnected socket is not fully tested.
 11. `reconnect()` - Causes the client to reconnect to the server.
-12. `joinNamespace()` - Causes the client to join nsp. Shouldn't need to be called unless you change nsp manually.
+12. `joinNamespace(namespace: String)` - Causes the client to join namespace. Shouldn't need to be called unless you change namespaces manually.
 13. `leaveNamespace()` - Causes the client to leave the nsp and go back to /
 14. `off(event: String)` - Removes all event handlers for event.
 15. `off(id id: NSUUID)` - Removes the event that corresponds to id.

@@ -1,16 +1,26 @@
 
 window.onload = function () {
 
-      var socket = io.connect('/iot')
+      var socket = io.connect('/iot');
 
        var heart =  document.getElementById("heart");
        
-       socket.on('heartRate', function (msg) {
-           
-           var pulse = 60/msg/2
-           document.getElementById("label").innerText = msg + " bpm";
-           
-           heart.style.transition = "transform " + pulse + "s ease-in-out, opacity " + pulse + "s ease-in-out"
+       socket.on('data', function (data) {
+           console.log(data);
+           switch(data.tags.sensor) {
+               case 'hr':
+                   var pulse = 60/data.values.value/2;
+                   document.getElementById("label").innerText = data.values.value + " bpm";
+
+                   heart.style.transition = "transform " + pulse + "s ease-in-out, opacity " + pulse + "s ease-in-out";
+                   break;
+               case 'st':
+                   console.log(data);
+                   break;
+               default:
+                   console.log(data);
+           }
+
       });
        
       heart.addEventListener("transitionend", loopTransition, false);

@@ -84,8 +84,8 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-HeartRate/Socket_IO_Client_Swift.framework"
+  install_framework "Pods-HeartRate/SocketIOClientSwift.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-HeartRate/Socket_IO_Client_Swift.framework"
+  install_framework "Pods-HeartRate/SocketIOClientSwift.framework"
 fi

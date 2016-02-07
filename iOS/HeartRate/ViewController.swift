@@ -1,18 +1,19 @@
 import UIKit
-import Socket_IO_Client_Swift
+import SocketIOClientSwift
 
 class ViewController: UIViewController, MSBClientManagerDelegate {
     
     //MARK: Properties
-    
     @IBOutlet weak var labelStatusServer: UILabel!
     @IBOutlet weak var labelStatusBand: UILabel!
     @IBOutlet weak var labelStatusHeartRate: UILabel!
     @IBOutlet weak var labelStatusSkinTemp: UILabel!
     @IBOutlet weak var labelStatusHeartRateSensor: UILabel!
 
-    //let socket = SocketIOClient(socketURL: "http://sumanths-mbp.fritz.box:3010", options: [.Nsp("/iot")]);
-    //let socket = SocketIOClient(socketURL: "http://172.20.10.5:3010", options: [.Nsp("/iot")]);
+    let socket = SocketIOClient(socketURL: NSURL(string: "http://sumanths-mbp.fritz.box:3010")!, options: [.Nsp("/iot")]);
+    //let socket = SocketIOClient(socketURL: NSURL(string: "http://172.20.10.5:3010")!, options: [.Nsp("/iot")]);
+    let hrTag = ["user":"sumo", "device":"mband", "sensor":"hr"]
+    let stTag = ["user":"sumo", "device":"mband", "sensor":"st"]
     
     weak var client: MSBClient?
 
@@ -67,7 +68,8 @@ class ViewController: UIViewController, MSBClientManagerDelegate {
         
         if (heartRateData.quality == MSBSensorHeartRateQuality.Locked) {
             self.labelStatusHeartRateSensor.text = "Locked"
-            socket.emit("heartRate", heartRateData.heartRate)
+            //socket.emit("heartRate", heartRateData.heartRate)
+            socket.emit("data",["values": ["value": heartRateData.heartRate], "tags":hrTag ])
             
         } else if (heartRateData.quality == MSBSensorHeartRateQuality.Acquiring)
         {
@@ -77,7 +79,8 @@ class ViewController: UIViewController, MSBClientManagerDelegate {
     
     func reportSkinTemp(skinTempData: MSBSensorSkinTemperatureData!, error: NSError!) {
         self.labelStatusSkinTemp.text = NSString(format: "%0.2f", skinTempData.temperature*9/5+32) as String
-        socket.emit("skinTemp", skinTempData.temperature)
+        //socket.emit("skinTemp", skinTempData.temperature)
+        socket.emit("data",["values": ["value": skinTempData.temperature], "tags":stTag ])
     }
     
     //MARK: UI Actions

@@ -6,15 +6,18 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3010;
 
-var client = influx({
-  host : 'localhost',
-  database : 'mydb'
-})
+var influxdb = influx({
+    host : 'localhost',
+    port: 8086,
+    username: 'collectd',
+    password: 'collectd123',
+    database : 'iotdb'
+});
 
 var done = function (err, results) {
   //console.log(results)
 };
-// client.query('SELECT * FROM cpu WHERE time > now() - 5h', done)
+// influxdb.query('SELECT * FROM cpu WHERE time > now() - 5h', done)
  
 
 app.get('/', function(req, res) {
@@ -24,23 +27,13 @@ app.get('/', function(req, res) {
 
 io.of('/iot').on('connection', function(socket) {
     console.log('new connection ' + socket);
-    var hrTags = { user:'sumo', device:'mband', sensor:'hr' };
-    var stTags = { user:'sumo', device:'mband', sensor:'st' };
 
-    socket.on('heartRate', function(hr) {
-        //console.log(hr);
-        var value = parseInt(hr);
-        client.writePoint('iot', {value: value}, hrTags, done);
-        socket.broadcast.emit('heartRate', hr);
+    socket.on('data', function(data) {
+        //console.log(data);
+        influxdb.writePoint('iot', data.values, data.tags, done);
+        socket.broadcast.emit('data', data);
     });
 
-    socket.on('skinTemp', function(st) {
-        //console.log(st);
-        var value = parseInt(st);
-        client.writePoint('iot', {value: value}, stTags, done);
-        socket.broadcast.emit('skinTemp', value * 9 / 5 + 32);
-    });
-    
     socket.on('disconnect', function(msg) {
        console.log(msg);
     });            
