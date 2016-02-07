@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="microsofthealth.js"></script>
+    <link href="sample.css" rel="stylesheet" />
+    
+    <script>
+        var mshealth = new MicrosoftHealth({
+            clientId: "0000000044176169",
+            redirectUri: "http://localhost:3010/mbsync",
+            scope: "mshealth.ReadProfile mshealth.ReadDevices mshealth.ReadActivityHistory mshealth.ReadActivityLocation offline_access"
+        });
+        mshealth.login();
+    </script>
+</head>
+<body>
+    <script>        
+        mshealth.getProfile().then(
+            function (profile) {
+                var greeting = "Hello " + profile.firstName + ". Welcome to the Microsoft Health Cloud API";
+
+                document.getElementById("welcome").innerText = greeting;
+            },
+            function (error) {
+                onError(error.error);
+            }
+        );        
+
+        mshealth.getDevices().then(
+            function (devices) {
+                var message = "You have " + devices.deviceProfiles.length + " device(s) associated.";
+
+                document.getElementById("devices").innerText = message;
+            },
+            function (error) {
+                onError(error.error);
+            }
+        );
+
+        var sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+        mshealth.getSummaries({
+            period: "daily",
+            startTime: sevenDaysAgo.toISOString(),
+            endTime: (new Date()).toISOString()
+        }).then(
+            function (summaries) {
+                var totalSteps, totalCalories, message, i;
+                totalSteps = 0;
+                totalCalories = 0;
+                summaries = summaries.summaries;
+
+                for (i in summaries) {
+                    if (summaries[i].caloriesBurnedSummary && summaries[i].caloriesBurnedSummary.totalCalories) {
+                        totalCalories += summaries[i].caloriesBurnedSummary.totalCalories;
+                    }
+
+                    totalSteps += summaries[i].stepsTaken;                    
+                }
+
+                message = "You burned " + totalCalories + " calories and walked " + totalSteps + " steps in the last 7 days.";
+                document.getElementById("summaries").innerText = message;
+            },
+            function (error) { onError(error.error); }
+        );
+        
+        mshealth.getActivities({
+            startTime: sevenDaysAgo.toISOString(),
+            endTime: (new Date()).toISOString()
+        }).then(
+            function (activities) {
+                var message = "You logged " + activities.itemCount + " activities in the last 7 days.";
+
+                document.getElementById("activities").innerText = message;
+            },
+            function (error) {
+                onError(error.error);
+            }
+        );
+
+        function onError(error) {
+            var errorMessage, errorNode;
+
+            if (error && error.details) {
+                errorMessage = error.details[0].message;
+            } else if (error) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = "An error occurred";
+            }
+
+            errorNode = document.createElement("div");
+            errorNode.innerHTML = errorMessage;
+            document.getElementById("errors").appendChild(errorNode);
+        }        
+    </script>
+
+    <h1 id="welcome"></h1>
+    <div id="devices"></div>
+    <div id="activities"></div>
+    <div id="summaries"></div>
+    <div id="errors"></div>
+</body>
+</html>
