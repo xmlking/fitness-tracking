@@ -1,0 +1,9 @@
+{
+  "name": "Graphite",
+  "type": "datasource",
+  "id": "graphite",
+
+  "defaultMatchFormat": "glob",
+  "metrics": true,
+  "annotations": true
+}

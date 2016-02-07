@@ -1,0 +1,9 @@
+{
+  "type": "datasource",
+  "name": "Elasticsearch",
+  "id": "elasticsearch",
+
+  "defaultMatchFormat": "lucene",
+  "annotations": true,
+  "metrics": true
+}

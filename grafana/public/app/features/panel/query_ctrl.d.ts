@@ -1,0 +1,18 @@
+/// <reference path="../../../../public/app/headers/common.d.ts" />
+export declare class QueryCtrl {
+    $scope: any;
+    private $injector;
+    target: any;
+    datasource: any;
+    panelCtrl: any;
+    panel: any;
+    hasRawMode: boolean;
+    error: string;
+    constructor($scope: any, $injector: any);
+    getNextQueryLetter(): any;
+    removeQuery(): void;
+    duplicateQuery(): void;
+    moveQuery(direction: any): void;
+    refresh(): void;
+    toggleHideQuery(): void;
+}
