@@ -93,6 +93,9 @@
     </span>
 </div>
 
+<div id="target">
+    Click here
+</div>
 <script>
 
     var timer = null;
@@ -119,6 +122,10 @@
         smoothieChart.streamTo(document.getElementById("mycanvas"), 250);
     }
 
+    function json(response) {
+        return response.json()
+    }
+
 window.onload = function () {
 
         var heartText =  document.getElementById("hr");
@@ -130,15 +137,56 @@ window.onload = function () {
         var uv =  document.getElementById("uv");
         var distance =  document.getElementById("distance");
 
+
         setupSmootie();
 
+        var subscribers = [];
+        fetch('/subscribers')
+            .then(json)
+            .then(function(data) {
+                subscribers = data;
+            })
+            .catch(function(err) {
+                console.error(err)
+            });
+
         var socket = io.connect('/iot');
-        socket.on('data', function (data) {
+
+        $("#target").click(function() {
+            socket.emit('join', subscribers[0].id);
+        });
+
+        socket.on('subscribed', function (subscriber) {
+            console.log("subscribed...",subscriber)
+            fetch('/subscribers')
+                    .then(json)
+                    .then(function(data) {
+                        console.log("on subscribed. subscribers:",data)
+                        subscribers = data;
+                    })
+                    .catch(function(err) {
+                        console.error(err)
+                    });
+        });
+        socket.on('unsubscribed', function (subscriber) {
+            console.log("unsubscribed...",subscriber)
+            fetch('/subscribers')
+                    .then(json)
+                    .then(function(data) {
+                        console.log("on unsubscribed. subscribers:",data)
+                        subscribers = data;
+                    })
+                    .catch(function(err) {
+                        console.error(err)
+                    });
+        });
+
+        socket.on('point', function (data) {
 
             switch(data.tags.sensor) {
-                case 'hr':
+                case 'heartRate':
 
-                    var hr = parseInt(data.values.value);
+                    var hr = parseInt(data.values.heartRate);
                     heartText.innerHTML = hr;
 
                     if(!heart.hasClass("animate-heartbeat")) {
@@ -172,36 +220,31 @@ window.onload = function () {
                     timeSeries.append(new Date().getTime(), hr);
                     break;
 
-                case 'st':
-                    var st = parseInt(data.values.value);
-                    tempText.innerHTML = st * 9 / 5 + 32;
-                    console.log(data.values.value);
+                case 'skinTemp':
+                    var st = parseFloat(data.values.skinTemp);
+                    tempText.innerHTML = (st * 9 / 5 + 32).toFixed(2);
                     break;
 
-                case 'steps':
+                case 'pedometer':
                     totalSteps.innerHTML = parseInt(data.values.totalSteps);
                     break;
 
-                case 'position':
-                    distance.innerHTML = parseInt(data.values.distance);
+                case 'distance':
+                    distance.innerHTML = parseInt(data.values.totalDistance);
                     break;
 
-                case 'cl':
+                case 'calories':
                     cl.innerHTML = parseInt(data.values.calories);
                     break;
 
 
                 case 'uv':
-                    uv.innerHTML = data.values.value;
+                    uv.innerHTML = data.values.uv;
                     break;
 
                 default:
                     console.log(data);
             }
-
-
-
-
 
         });
     };

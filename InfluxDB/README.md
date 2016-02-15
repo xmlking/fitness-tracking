@@ -23,6 +23,7 @@ sudo logrotate  conf/logrotate.d/influxdb
 
 #### Starting InfluxDB
 ```bash
+# run fourground
 influxd -config conf/influxdb.conf
 # or run background
 nohup influxd -pidfile logs/influxdb.pid -config conf/influxdb.conf > /dev/null  2>logs/influxdb.log &
@@ -58,4 +59,14 @@ GRANT READ ON iotdb TO grafana
 CREATE USER collectd WITH PASSWORD 'collectd123'
 GRANT WRITE ON iotdb TO collectd
 SHOW USERS
+
+# select wearables
+SELECT * FROM wearables WHERE time > now() - 5s
+SELECT * FROM wearables WHERE sensor =  'skinTemp'
+# how to purge data? 
+DROP MEASUREMENT wearables
+# show tag keys
+SHOW TAG KEYS FROM "wearables"
+# show tag values
+SHOW TAG VALUES FROM "wearables" WITH KEY = "sensor"
 ````
