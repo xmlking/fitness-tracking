@@ -91,6 +91,10 @@
         <i id="uv_index" class="fa fa-stop fa-stack-2x"></i>
         <i id="uv" class="fa-stack-1x fa-stack-text fa-inverse"></i>
     </span>
+    <span style="margin-left: 2cm; vertical-align:baseline;" class="fa-stack fa-4x">
+        <i id="band_contact" class="fa fa-stop fa-stack-2x"></i>
+        <i id="bc" class="fa-stack-1x fa-stack-text fa-inverse"></i>
+    </span>
 </div>
 
 <div id="target">
@@ -136,6 +140,7 @@ window.onload = function () {
         var cl =  document.getElementById("cl");
         var uv =  document.getElementById("uv");
         var distance =  document.getElementById("distance");
+        var bc =  document.getElementById("bc");
 
 
         setupSmootie();
@@ -183,10 +188,10 @@ window.onload = function () {
 
         socket.on('point', function (data) {
 
-            switch(data.tags.sensor) {
+            switch(data.measurement) {
                 case 'heartRate':
 
-                    var hr = parseInt(data.values.heartRate);
+                    var hr = parseInt(data.values.value);
                     heartText.innerHTML = hr;
 
                     if(!heart.hasClass("animate-heartbeat")) {
@@ -221,7 +226,7 @@ window.onload = function () {
                     break;
 
                 case 'skinTemp':
-                    var st = parseFloat(data.values.skinTemp);
+                    var st = parseFloat(data.values.value);
                     tempText.innerHTML = (st * 9 / 5 + 32).toFixed(2);
                     break;
 
@@ -237,9 +242,12 @@ window.onload = function () {
                     cl.innerHTML = parseInt(data.values.calories);
                     break;
 
-
                 case 'uv':
-                    uv.innerHTML = data.values.uv;
+                    uv.innerHTML = data.values.value;
+                    break;
+
+                case 'contact':
+                    bc.innerHTML = data.values.value;
                     break;
 
                 default:

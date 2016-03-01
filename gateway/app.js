@@ -82,11 +82,8 @@ io.of('/iot').on('connection', (socket) => {
         //console.log('rooms', socket.rooms);
         //console.log('subscriber', socket.subscriber);
         //console.log('point', point);
-        influxdb.writePoint(socket.subscriber.type, point.values, {
-            userid: socket.subscriber.userid,
-            device: socket.subscriber.device,
-            sensor: point.tags.sensor
-        }, done);
+        let tags = point.tags? Object.assign({}, socket.subscriber, point.tags): socket.subscriber;
+        influxdb.writePoint(point.measurement, point.values,tags, done);
         socket.broadcast.to(socket.id).emit('point', point);
     });
 

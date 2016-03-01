@@ -61,10 +61,12 @@ GRANT WRITE ON iotdb TO collectd
 SHOW USERS
 
 # select wearables
-SELECT * FROM wearables WHERE time > now() - 5s
-SELECT * FROM wearables WHERE sensor =  'skinTemp'
+SELECT * FROM heartRate WHERE time > now() - 5s
+SELECT * FROM skinTemp WHERE time > now() - 10m
+SELECT * FROM contact WHERE time > now() - 5s
+SELECT * FROM  heartRate WHERE category =  'wearables'
 # how to purge data? 
-DROP MEASUREMENT wearables
+DROP MEASUREMENT heartRate
 # show tag keys
 SHOW TAG KEYS FROM "wearables"
 # show tag values
