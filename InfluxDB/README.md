@@ -60,15 +60,26 @@ CREATE USER collectd WITH PASSWORD 'collectd123'
 GRANT WRITE ON iotdb TO collectd
 SHOW USERS
 
+
+# Downsampling and Data Retention (only if needed)
+CREATE RETENTION POLICY two_hours ON iotdb DURATION 2h REPLICATION 1 DEFAULT
+SHOW RETENTION POLICIES ON iotdb
+CREATE CONTINUOUS QUERY cq_30m ON iotdb BEGIN SELECT mean(category), mean(device), mean(sensorId), mean(userid), mean(value) INTO iotdb."default".downsampled_heartRate FROM heartRate GROUP BY time(30m) END
+SHOW CONTINUOUS QUERIES
+SELECT * FROM iotdb."default".downsampled_heartRate LIMIT 5
+
 # select wearables
 SELECT * FROM heartRate WHERE time > now() - 5s
 SELECT * FROM skinTemp WHERE time > now() - 10m
 SELECT * FROM contact WHERE time > now() - 5s
-SELECT * FROM  heartRate WHERE category =  'wearables'
+SELECT * FROM  heartRate WHERE category =  'wearables' LIMIT 5
 # how to purge data? 
 DROP MEASUREMENT heartRate
 # show tag keys
 SHOW TAG KEYS FROM "wearables"
 # show tag values
 SHOW TAG VALUES FROM "wearables" WITH KEY = "sensor"
+# show server stats
+SHOW STATS
+SHOW DIAGNOSTICS
 ````

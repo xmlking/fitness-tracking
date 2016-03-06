@@ -30,6 +30,7 @@ import Foundation
     var closed: Bool { get }
     var connected: Bool { get }
     var connectParams: [String: AnyObject]? { get set }
+    var doubleEncodeUTF8: Bool { get }
     var cookies: [NSHTTPCookie]? { get }
     var extraHeaders: [String: String]? { get }
     var fastUpgrade: Bool { get }
@@ -49,11 +50,13 @@ import Foundation
     
     init(client: SocketEngineClient, url: NSURL, options: NSDictionary?)
     
-    func close(reason: String)
+    @available(*, deprecated=5.5, message="Please use disconnect") func close(reason: String)
+    func connect()
     func didError(error: String)
+    func disconnect(reason: String)
     func doFastUpgrade()
     func flushWaitingForPostToWebSocket()
-    func open()
+    @available(*, deprecated=5.5, message="Please use connect") func open()
     func parseEngineData(data: NSData)
     func parseEngineMessage(message: String, fromPolling: Bool)
     func write(msg: String, withType type: SocketEnginePacketType, withData data: [NSData])
@@ -86,6 +89,24 @@ extension SocketEngineSpec {
             let str = "b4" + data.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))
             
             return .Right(str)
+        }
+    }
+    
+    func doubleEncodeUTF8(string: String) -> String {
+        if let latin1 = string.dataUsingEncoding(NSUTF8StringEncoding),
+            utf8 = NSString(data: latin1, encoding: NSISOLatin1StringEncoding) {
+                return utf8 as String
+        } else {
+            return string
+        }
+    }
+    
+    func fixDoubleUTF8(string: String) -> String {
+        if let utf8 = string.dataUsingEncoding(NSISOLatin1StringEncoding),
+            latin1 = NSString(data: utf8, encoding: NSUTF8StringEncoding) {
+                return latin1 as String
+        } else {
+            return string
         }
     }
     
