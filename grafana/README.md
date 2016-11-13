@@ -6,7 +6,6 @@ Open source dashboard builder for visualizing time series metrics, IoT data.
 ```bash
 brew update
 brew install grafana
-
 # to update use the reinstall command
 brew update
 brew reinstall grafana
@@ -18,7 +17,6 @@ brew reinstall grafana
   brew services start grafana
 # Or, if you don't want/need a background service you can just run:
 cd grafana
-
 grafana-server \
     --config=./conf/grafana.ini \
     --pidfile=logs/grafana.pid \
@@ -26,11 +24,9 @@ grafana-server \
     cfg:default.paths.logs=./logs \
     cfg:default.paths.data=./data \
     cfg:default.paths.plugins=./plugins
-
 # or, use bin/grafana.sh 
 ./bin/grafana.sh start
 ./bin/grafana.sh stop
-
 # or, Run background
 nohup grafana-server --pidfile=logs/grafana.pid > /dev/null 2>&1 &
 ```
