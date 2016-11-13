@@ -1,8 +1,0 @@
-{
-  "type": "datasource",
-  "name": "CloudWatch",
-  "id": "cloudwatch",
-
-  "metrics": true,
-  "annotations": true
-}

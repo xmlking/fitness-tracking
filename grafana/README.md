@@ -1,19 +1,36 @@
 Grafana
--------
+=======
 Open source dashboard builder for visualizing time series metrics, IoT data.
 
 ### Install 
-This project includes Grafana pre-build for Mac using [steps](http://docs.grafana.org/project/building_from_source/).
+```
+brew update
+brew install grafana
 
-For other platforms, download from [grafana](http://grafana.org/download/)
+# to update use the reinstall command
+brew update
+brew reinstall grafana
+```
 
 ### Start
-```bash
-./bin/grafana-server --pidfile=logs/grafana.pid
+```
+# To have launchd start grafana now and restart at login:
+  brew services start grafana
+# Or, if you don't want/need a background service you can just run:
+cd 
+  grafana-server \
+  --config=./conf/grafana.ini \
+  --pidfile=logs/grafana.pid \
+  --homepath /usr/local/share/grafana \
+  cfg:default.paths.logs=./logs \
+  cfg:default.paths.data=./data \
+  cfg:default.paths.plugins=./plugins
+# or, use bin/grafana.sh 
+./bin/grafana.sh start
+./bin/grafana.sh stop
 # Run background
-nohup ./bin/grafana-server --pidfile=logs/grafana.pid > /dev/null 2>&1 &
+nohup grafana-server --pidfile=logs/grafana.pid > /dev/null 2>&1 &
 ```
 
 ### Web Access
-
-http://localhost:3000
+http://localhost:3000/

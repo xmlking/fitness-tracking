@@ -1,1 +1,0 @@
-{"version":3,"file":"module.js","sourceRoot":"","sources":["../../../../../public/app/plugins/datasource/prometheus/module.ts"],"names":["PrometheusConfigCtrl","PrometheusConfigCtrl.constructor"],"mappings":";;;;;;;;;;;;YAGA;gBAAAA;gBAEAC,CAACA;gBADQD,gCAAWA,GAAGA,+DAA+DA,CAACA;gBACvFA,2BAACA;YAADA,CAACA,AAFD,IAEC;YAGyB,0DAAU;YACX,wDAAS;YACR,6CAAU"}

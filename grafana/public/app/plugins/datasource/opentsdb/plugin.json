@@ -1,8 +1,0 @@
-{
-  "type": "datasource",
-  "name": "OpenTSDB",
-  "id": "opentsdb",
-
-  "metrics": true,
-  "defaultMatchFormat": "pipe"
-}

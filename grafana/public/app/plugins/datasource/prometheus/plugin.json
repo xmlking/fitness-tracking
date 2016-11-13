@@ -1,7 +1,0 @@
-{
-  "type": "datasource",
-  "name": "Prometheus",
-  "id": "prometheus",
-
-  "metrics": true
-}
