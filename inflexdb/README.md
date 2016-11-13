@@ -16,7 +16,7 @@ cat /proc/sys/fs/file-max
 ```
 
 ### Setup
-```
+```bash
 mkdir /Developer/Applications/inflexdb
 cd /Developer/Applications/inflexdb
 influxd config > conf/influxdb.conf
